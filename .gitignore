@@ -1,29 +1,8 @@
-# Environment
-venv/
-.env
-
-# Python
 __pycache__/
 *.py[cod]
-*.class
+*$py.class
 *.so
 .Python
-*.egg-info/
-
-# IDE
-.vscode/
-.idea/
-
-# OS
+venv/
+.env
 .DS_Store
-Thumbs.db
-
-# Testing
-.pytest_cache/
-
-echo "" >> .gitignore
-echo "# Secrets" >> .gitignore
-echo ".env" >> .gitignore
-echo "*.env" >> .gitignore
-echo ".env.*" >> .gitignore
-echo "**/.env" >> .gitignore
