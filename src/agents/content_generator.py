@@ -6,13 +6,16 @@ load_dotenv()
 
 class ContentGenerator:
     def __init__(self):
-        self.client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+        api_key = os.getenv("ANTHROPIC_API_KEY")
+        if not api_key:
+            raise ValueError("ANTHROPIC_API_KEY not found in environment variables")
+        self.client = Anthropic(api_key=api_key)
     
     def generate_post(self, topic: str, platform: str = "twitter") -> str:
         """Generate a social media post based on topic"""
         
         prompt = f"""Create a {platform} post about: {topic}
-        
+
 Requirements:
 - Engaging and authentic
 - Include relevant hashtags
@@ -21,12 +24,16 @@ Requirements:
 
 Return ONLY the post text, nothing else."""
 
-        message = self.client.messages.create(
-            model="claude-sonnet-4-20250514",
-            max_tokens=1024,
-            messages=[
-                {"role": "user", "content": prompt}
-            ]
-        )
-        
-        return message.content[0].text
+        try:
+            message = self.client.messages.create(
+                model="claude-sonnet-4-20250514",
+                max_tokens=1024,
+                messages=[
+                    {"role": "user", "content": prompt}
+                ]
+            )
+            
+            return message.content[0].text
+        except Exception as e:
+            print(f"Error generating content: {e}")
+            raise

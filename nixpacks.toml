@@ -1,0 +1,33 @@
+[phases.setup]
+nixPkgs = ['python311']
+
+[phases.install]
+cmds = ['pip install -r requirements.txt']
+
+[start]
+cmd = 'uvicorn src.main:app --host 0.0.0.0 --port $PORT'
+```
+
+### Fix 4: Verify Your Project Structure
+
+Your project should look like this:
+```
+social-media-ai-agent/
+├── src/
+│   ├── __init__.py
+│   ├── main.py
+│   ├── agents/
+│   │   ├── __init__.py
+│   │   └── content_generator.py
+│   ├── tools/
+│   │   ├── __init__.py
+│   │   └── social_publisher.py
+│   └── workflows/
+│       ├── __init__.py
+│       └── approval_workflow.py
+├── requirements.txt
+├── Procfile
+├── runtime.txt          ← ADD THIS
+├── nixpacks.toml       ← ADD THIS
+├── .gitignore
+└── README.md

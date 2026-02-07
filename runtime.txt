@@ -1,0 +1,8 @@
+python-3.11.7
+```
+
+### Fix 2: Update Procfile
+
+Make sure your `Procfile` is correct:
+```
+web: uvicorn src.main:app --host 0.0.0.0 --port $PORT
