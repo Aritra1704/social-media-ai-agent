@@ -1,4 +1,6 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from agents.content_generator import ContentGenerator
 from tools.social_publisher import SocialPublisher
@@ -19,19 +21,27 @@ class ApprovalRequest(BaseModel):
     workflow_id: str
     approved: bool
 
-@app.get("/")
+@app.get("/", response_class=HTMLResponse)
 async def root():
-    return {
-        "message": "Social Media AI Agent - Running!",
-        "status": "healthy",
-        "endpoints": {
-            "health": "GET /health",
-            "generate": "POST /generate",
-            "approve": "POST /approve",
-            "status": "GET /status/{id}",
-            "pending": "GET /pending"
+    """Serve the UI"""
+    try:
+        with open("index.html", "r") as f:
+            return f.read()
+    except FileNotFoundError:
+        # Fallback to API info if index.html not found
+        return {
+            "message": "Social Media AI Agent - Running!",
+            "status": "healthy",
+            "endpoints": {
+                "ui": "GET / (this page)",
+                "health": "GET /health",
+                "api_docs": "GET /docs",
+                "generate": "POST /generate",
+                "approve": "POST /approve",
+                "status": "GET /status/{id}",
+                "pending": "GET /pending"
+            }
         }
-    }
 
 @app.get("/health")
 async def health():
@@ -86,3 +96,8 @@ async def list_pending():
     pending = {k: v for k, v in pending_posts.items() 
                if v["status"] == "pending_approval"}
     return {"count": len(pending), "posts": pending}
+
+if __name__ == "__main__":
+    import uvicorn
+    port = int(os.getenv("PORT", 8000))
+    uvicorn.run(app, host="0.0.0.0", port=port)
